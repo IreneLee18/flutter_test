@@ -5,10 +5,12 @@ import 'package:transparent_image/transparent_image.dart';
 class MealDetailScreen extends StatelessWidget {
   const MealDetailScreen({
     required this.meal,
+    required this.onChangeFavorite,
     super.key,
   });
 
   final Meal meal;
+  final void Function(Meal meal) onChangeFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,14 @@ class MealDetailScreen extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           softWrap: true,
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              onChangeFavorite(meal);
+            },
+            icon: const Icon(Icons.star),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -27,6 +37,9 @@ class MealDetailScreen extends StatelessWidget {
             FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
               image: NetworkImage(meal.imageUrl),
+              height: 300,
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
             const SizedBox(height: 16),
             Text(
@@ -41,10 +54,9 @@ class MealDetailScreen extends StatelessWidget {
               (ingredient) => Text(
                 ingredient,
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.white),
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
               ),
             ),
             const SizedBox(height: 16),
@@ -62,10 +74,9 @@ class MealDetailScreen extends StatelessWidget {
                 child: Text(
                   step,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium!
-                      .copyWith(color: Colors.white),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
                 ),
               ),
             ),

@@ -15,12 +15,13 @@ class MealItem extends StatelessWidget {
     required Meal meal,
   }) onDescription;
 
+
   get _complexityText {
     return meal.complexity.name[0].toUpperCase() +
         meal.complexity.name.substring(1);
   }
 
-    get _affordabilityText {
+  get _affordabilityText {
     return meal.affordability.name[0].toUpperCase() +
         meal.affordability.name.substring(1);
   }
