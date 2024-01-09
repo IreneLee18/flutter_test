@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/meals/models/category.dart';
 
-class CategoryItem extends StatelessWidget {
+class CategoryItem extends ConsumerWidget {
   const CategoryItem({
     required this.category,
     required this.onSelected,
@@ -11,18 +12,20 @@ class CategoryItem extends StatelessWidget {
   final Category category;
   final Function({
     required BuildContext context,
+    required WidgetRef ref,
     required Category category,
   }) onSelected;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // InkWell & GestureDetector 都是一些 EventListener
     // return GestureDetector(
     return InkWell(
       onTap: () {
         onSelected(
           context: context,
-          category:category,
+          ref: ref,
+          category: category,
         );
       },
       // 手勢功能的動畫效果的顏色

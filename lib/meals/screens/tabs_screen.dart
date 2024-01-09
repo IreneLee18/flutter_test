@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:test/meals/models/meal.dart';
 import 'package:test/meals/screens/category_screen.dart';
 import 'package:test/meals/screens/filters_screen.dart';
 import 'package:test/meals/screens/meals_screen.dart';
 import 'package:test/meals/widgets/drawer.dart';
 import 'package:test/meals/providers/favorites_provider.dart';
-
-const initFilters = {
-  Filter.glutenFree: false,
-  Filter.lactoseFree: false,
-  Filter.vegetarian: false,
-  Filter.vegan: false,
-};
 
 class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
@@ -26,8 +18,6 @@ class TabsScreen extends ConsumerStatefulWidget {
 class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedIndex = 0;
 
-  Map<Filter, bool> _filters = initFilters;
-  
   _selectedPage(int i) {
     setState(() {
       _selectedIndex = i;
@@ -37,14 +27,12 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   void _onSelectedScreen(String screen) async {
     Navigator.pop(context);
     if (screen == 'Filters') {
-      final result = await Navigator.push<Map<Filter, bool>>(
+      Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (ctx) => FiltersScreen(currentFilters: _filters)),
+          builder: (ctx) => const FiltersScreen(),
+        ),
       );
-      setState(() {
-        _filters = result ?? initFilters;
-      });
     }
   }
 
@@ -52,9 +40,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
   Widget build(BuildContext context) {
     final favoriteMeals = ref.watch(favoriteMealsProvider);
     final Widget body = _selectedIndex == 0
-        ? CategoryScreen(
-            filters: _filters,
-          )
+        ? const CategoryScreen()
         : MealsScreen(
             meals: favoriteMeals,
           );

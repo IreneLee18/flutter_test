@@ -1,62 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:test/meals/providers/filter_provider.dart';
 
-enum Filter {
-  glutenFree,
-  lactoseFree,
-  vegetarian,
-  vegan,
-}
-
-class FiltersScreen extends StatefulWidget {
+class FiltersScreen extends ConsumerStatefulWidget {
   const FiltersScreen({
-    required this.currentFilters,
     super.key,
   });
-  final Map<Filter, bool> currentFilters;
 
   @override
-  State<FiltersScreen> createState() {
+  ConsumerState<FiltersScreen> createState() {
     return _FiltersScreenState();
   }
 }
 
-class _FiltersScreenState extends State<FiltersScreen> {
-  bool _gluten = false;
-  bool _lactose = false;
-  bool _vegetarian = false;
-  bool _vegan = false;
-
- // 初始化狀態，因為 widget.[變數/方法]只能用於 build 裡面，所以需要透過 initState 的方式使用
-  @override
-  void initState() {
-    super.initState();
-    _gluten = widget.currentFilters[Filter.glutenFree] ?? false;
-    _lactose = widget.currentFilters[Filter.lactoseFree] ?? false;
-    _vegetarian = widget.currentFilters[Filter.vegetarian] ?? false;
-    _vegan = widget.currentFilters[Filter.vegan] ?? false;
-  }
-
-  void onChange(type, bool status) {
-    setState(() {
-      switch (type) {
-        case 'gluten':
-          _gluten = status;
-          break;
-        case 'lactose':
-          _lactose = status;
-          break;
-        case 'vegetarian':
-          _vegetarian = status;
-          break;
-        case 'vegan':
-          _vegan = status;
-          break;
-      }
-    });
-  }
+class _FiltersScreenState extends ConsumerState<FiltersScreen> {
+//  // 初始化狀態，因為 widget.[變數/方法]只能用於 build 裡面，所以需要透過 initState 的方式使用
+//   @override
+//   void initState() {
+//     super.initState();
+//     _gluten = widget.currentFilters[Filter.glutenFree] ?? false;
+//     _lactose = widget.currentFilters[Filter.lactoseFree] ?? false;
+//     _vegetarian = widget.currentFilters[Filter.vegetarian] ?? false;
+//     _vegan = widget.currentFilters[Filter.vegan] ?? false;
+//   }
 
   @override
   Widget build(BuildContext context) {
+    final filters = ref.watch(filterProvider);
+    final onChange = ref.read(filterProvider.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Filters'),
@@ -80,47 +51,48 @@ class _FiltersScreenState extends State<FiltersScreen> {
         onPopInvoked: (didPop) async {
           // didPop：如果 didPop 為 true 表示已經調用返回上一頁了，因此無需做剩餘的步驟
           if (didPop) return;
+          Navigator.of(context).pop();
           // 當離開此頁面時，將資料傳遞給上一頁的頁面
-          Navigator.of(context).pop(
-            {
-              Filter.glutenFree: _gluten,
-              Filter.lactoseFree: _lactose,
-              Filter.vegetarian: _vegetarian,
-              Filter.vegan: _vegan,
-            },
-          );
+          // Navigator.of(context).pop(
+          //   {
+          //     Filter.glutenFree: _gluten,
+          //     Filter.lactoseFree: _lactose,
+          //     Filter.vegetarian: _vegetarian,
+          //     Filter.vegan: _vegan,
+          //   },
+          // );
         },
         child: Column(children: [
           FilterItem(
             title: 'Gluten-free',
             subtitle: 'Only include gluten free meal.',
-            value: _gluten,
+            value: filters[Filter.glutenFree]!,
             onChange: (status) {
-              onChange('gluten', status);
+              onChange.toggleStatus(Filter.glutenFree, status);
             },
           ),
           FilterItem(
             title: 'Lactose-free',
             subtitle: 'Only include lactose free meal.',
-            value: _lactose,
+            value: filters[Filter.lactoseFree]!,
             onChange: (status) {
-              onChange('lactose', status);
+              onChange.toggleStatus(Filter.lactoseFree, status);
             },
           ),
           FilterItem(
             title: 'Vegetarian',
             subtitle: 'Only include vegetarian meal.',
-            value: _vegetarian,
+            value: filters[Filter.vegetarian]!,
             onChange: (status) {
-              onChange('vegetarian', status);
+              onChange.toggleStatus(Filter.vegetarian, status);
             },
           ),
           FilterItem(
             title: 'Vegan',
             subtitle: 'Only include vegan meal.',
-            value: _vegan,
+            value: filters[Filter.vegan]!,
             onChange: (status) {
-              onChange('vegan', status);
+              onChange.toggleStatus(Filter.vegan, status);
             },
           ),
         ]),

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/meals/data/category.dart';
 import 'package:test/meals/data/meal.dart';
 import 'package:test/meals/models/category.dart';
 import 'package:test/meals/models/meal.dart';
-import 'package:test/meals/screens/filters_screen.dart';
+import 'package:test/meals/providers/filter_provider.dart';
 import 'package:test/meals/screens/meals_screen.dart';
 import 'package:test/meals/widgets/category_item.dart';
 
-class CategoryScreen extends StatelessWidget {
+class CategoryScreen extends ConsumerWidget {
   const CategoryScreen({
-    required this.filters,
     super.key,
   });
-  final Map<Filter, bool> filters;
 
   void _selectedCategory({
     required BuildContext context,
+    required WidgetRef ref,
     required Category category,
   }) {
+    final filters = ref.watch(filterProvider);
     List<Meal> mealsData = meals
         .where((meal) => meal.categories.contains(category.id))
         .where((meal) {
@@ -49,7 +50,7 @@ class CategoryScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Categories'),
