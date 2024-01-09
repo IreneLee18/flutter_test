@@ -18,24 +18,10 @@ class CategoryScreen extends ConsumerWidget {
     required WidgetRef ref,
     required Category category,
   }) {
-    final filters = ref.watch(filterProvider);
-    List<Meal> mealsData = meals
+    final filtersMeals = ref.watch(filterMealsProvider);
+    List<Meal> mealsData = filtersMeals
         .where((meal) => meal.categories.contains(category.id))
-        .where((meal) {
-      if (filters[Filter.glutenFree]! && !meal.isGlutenFree) {
-        return false;
-      }
-      if (filters[Filter.lactoseFree]! && !meal.isLactoseFree) {
-        return false;
-      }
-      if (filters[Filter.vegetarian]! && !meal.isVegetarian) {
-        return false;
-      }
-      if (filters[Filter.vegan]! && !meal.isVegan) {
-        return false;
-      }
-      return true;
-    }).toList();
+        .toList();
 
     // 兩種切換 router
     // 寫法一：

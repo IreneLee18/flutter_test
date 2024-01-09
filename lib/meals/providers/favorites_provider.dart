@@ -1,11 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/meals/models/meal.dart';
 
-// Provider: 純資料
-// final mealsProvider = Provider((ref) {
-//   return meals;
-// });
-
 // 什麼資料要透過 StateNotifier 來控管
 // 範例：<List<Meal>> 要透過 StateNotifier 來控管
 class FavoriteMealsNotifier extends StateNotifier<List<Meal>> {
