@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/meals/models/meal.dart';
+import 'package:test/meals/providers/favorites_provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class MealDetailScreen extends StatelessWidget {
+class MealDetailScreen extends ConsumerWidget {
   const MealDetailScreen({
     required this.meal,
-    required this.onChangeFavorite,
     super.key,
   });
 
   final Meal meal;
-  final void Function(Meal meal) onChangeFavorite;
 
   @override
-  Widget build(BuildContext context) {
+  // WidgetRef ref：負責用來監聽 Provider
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorite = ref.watch(favoriteMealsProvider).contains(meal);
     return (Scaffold(
       appBar: AppBar(
         title: Text(
@@ -25,9 +27,20 @@ class MealDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-              onChangeFavorite(meal);
+              // 使用 read 而不使用 watch，是因為我不想用來監聽 Provider 的值，我只是想執行他的韓式而已
+              final result =
+                  ref.read(favoriteMealsProvider.notifier).toggleStatus(meal);
+              ScaffoldMessenger.of(context).clearSnackBars();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  duration: const Duration(seconds: 3),
+                  content: Text(result.values.first
+                      ? '💖 ${result.keys.first} is favorite.'
+                      : '💔 ${result.keys.first} is no longer favorite.'),
+                ),
+              );
             },
-            icon: const Icon(Icons.star),
+            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
           )
         ],
       ),

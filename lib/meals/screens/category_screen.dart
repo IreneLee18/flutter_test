@@ -10,11 +10,9 @@ import 'package:test/meals/widgets/category_item.dart';
 class CategoryScreen extends StatelessWidget {
   const CategoryScreen({
     required this.filters,
-    required this.onChangeFavorite,
     super.key,
   });
   final Map<Filter, bool> filters;
-  final void Function(Meal meal) onChangeFavorite;
 
   void _selectedCategory({
     required BuildContext context,
@@ -46,7 +44,6 @@ class CategoryScreen extends StatelessWidget {
       builder: (ctx) => MealsScreen(
         title: category.title,
         meals: mealsData,
-        onChangeFavorite: onChangeFavorite,
       ),
     ));
   }

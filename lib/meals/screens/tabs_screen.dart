@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/meals/models/meal.dart';
 import 'package:test/meals/screens/category_screen.dart';
 import 'package:test/meals/screens/filters_screen.dart';
 import 'package:test/meals/screens/meals_screen.dart';
 import 'package:test/meals/widgets/drawer.dart';
+import 'package:test/meals/providers/favorites_provider.dart';
 
 const initFilters = {
   Filter.glutenFree: false,
@@ -12,44 +14,20 @@ const initFilters = {
   Filter.vegan: false,
 };
 
-class TabsScreen extends StatefulWidget {
+class TabsScreen extends ConsumerStatefulWidget {
   const TabsScreen({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  ConsumerState<TabsScreen> createState() {
     return _TabsScreenState();
   }
 }
 
-class _TabsScreenState extends State<TabsScreen> {
+class _TabsScreenState extends ConsumerState<TabsScreen> {
   int _selectedIndex = 0;
 
-  final List<Meal> _favoritesMeals = [];
   Map<Filter, bool> _filters = initFilters;
-
-  void _showStatusMessage(String msg) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        content: Text(msg),
-      ),
-    );
-  }
-
-  void _setFavorites(Meal meal) {
-    final isInclude = _favoritesMeals.contains(meal);
-    setState(() {
-      if (isInclude) {
-        _favoritesMeals.remove(meal);
-        _showStatusMessage('💔 ${meal.title} is no longer favorite.');
-      } else {
-        _favoritesMeals.add(meal);
-        _showStatusMessage('💖 ${meal.title} is favorite.');
-      }
-    });
-  }
-
+  
   _selectedPage(int i) {
     setState(() {
       _selectedIndex = i;
@@ -72,14 +50,13 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final favoriteMeals = ref.watch(favoriteMealsProvider);
     final Widget body = _selectedIndex == 0
         ? CategoryScreen(
             filters: _filters,
-            onChangeFavorite: _setFavorites,
           )
         : MealsScreen(
-            meals: _favoritesMeals,
-            onChangeFavorite: _setFavorites,
+            meals: favoriteMeals,
           );
     final String title = _selectedIndex == 0 ? 'Categories' : 'Favorites';
 
