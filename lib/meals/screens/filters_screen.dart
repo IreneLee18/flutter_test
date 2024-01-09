@@ -44,59 +44,58 @@ class _FiltersScreenState extends ConsumerState<FiltersScreen> {
       //     }
       //   },
       // ),
-      body: PopScope(
-        // canPop：當前頁面是否可以返回上一頁
-        canPop: false,
-        // onPopInvoked：當使用者嘗試返回時會調用的函式
-        onPopInvoked: (didPop) async {
-          // didPop：如果 didPop 為 true 表示已經調用返回上一頁了，因此無需做剩餘的步驟
-          if (didPop) return;
-          Navigator.of(context).pop();
-          // 當離開此頁面時，將資料傳遞給上一頁的頁面
-          // Navigator.of(context).pop(
-          //   {
-          //     Filter.glutenFree: _gluten,
-          //     Filter.lactoseFree: _lactose,
-          //     Filter.vegetarian: _vegetarian,
-          //     Filter.vegan: _vegan,
-          //   },
-          // );
-        },
-        child: Column(children: [
-          FilterItem(
-            title: 'Gluten-free',
-            subtitle: 'Only include gluten free meal.',
-            value: filters[Filter.glutenFree]!,
-            onChange: (status) {
-              onChange.toggleStatus(Filter.glutenFree, status);
-            },
-          ),
-          FilterItem(
-            title: 'Lactose-free',
-            subtitle: 'Only include lactose free meal.',
-            value: filters[Filter.lactoseFree]!,
-            onChange: (status) {
-              onChange.toggleStatus(Filter.lactoseFree, status);
-            },
-          ),
-          FilterItem(
-            title: 'Vegetarian',
-            subtitle: 'Only include vegetarian meal.',
-            value: filters[Filter.vegetarian]!,
-            onChange: (status) {
-              onChange.toggleStatus(Filter.vegetarian, status);
-            },
-          ),
-          FilterItem(
-            title: 'Vegan',
-            subtitle: 'Only include vegan meal.',
-            value: filters[Filter.vegan]!,
-            onChange: (status) {
-              onChange.toggleStatus(Filter.vegan, status);
-            },
-          ),
-        ]),
-      ),
+      // body: PopScope(
+      //   // canPop：當前頁面是否可以返回上一頁
+      //   canPop: false,
+      //   // onPopInvoked：當使用者嘗試返回時會調用的函式
+      //   onPopInvoked: (didPop) async {
+      //     // didPop：如果 didPop 為 true 表示已經調用返回上一頁了，因此無需做剩餘的步驟
+      //     if (didPop) return;
+      //     Navigator.of(context).pop();
+      //     // 當離開此頁面時，將資料傳遞給上一頁的頁面
+      //     // Navigator.of(context).pop(
+      //     //   {
+      //     //     Filter.glutenFree: _gluten,
+      //     //     Filter.lactoseFree: _lactose,
+      //     //     Filter.vegetarian: _vegetarian,
+      //     //     Filter.vegan: _vegan,
+      //     //   },
+      //     // );
+      //   },
+      body: Column(children: [
+        FilterItem(
+          title: 'Gluten-free',
+          subtitle: 'Only include gluten free meal.',
+          value: filters[Filter.glutenFree]!,
+          onChange: (status) {
+            onChange.toggleStatus(Filter.glutenFree, status);
+          },
+        ),
+        FilterItem(
+          title: 'Lactose-free',
+          subtitle: 'Only include lactose free meal.',
+          value: filters[Filter.lactoseFree]!,
+          onChange: (status) {
+            onChange.toggleStatus(Filter.lactoseFree, status);
+          },
+        ),
+        FilterItem(
+          title: 'Vegetarian',
+          subtitle: 'Only include vegetarian meal.',
+          value: filters[Filter.vegetarian]!,
+          onChange: (status) {
+            onChange.toggleStatus(Filter.vegetarian, status);
+          },
+        ),
+        FilterItem(
+          title: 'Vegan',
+          subtitle: 'Only include vegan meal.',
+          value: filters[Filter.vegan]!,
+          onChange: (status) {
+            onChange.toggleStatus(Filter.vegan, status);
+          },
+        ),
+      ]),
     );
   }
 }
