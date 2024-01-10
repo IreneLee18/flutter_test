@@ -40,7 +40,24 @@ class MealDetailScreen extends ConsumerWidget {
                 ),
               );
             },
-            icon: Icon(isFavorite ? Icons.star : Icons.star_border),
+            icon: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              // child: Icon(isFavorite ? Icons.star : Icons.star_border),
+              // 這時會發現不會有任何變化，因為 Flutter 他看的是外面的 Icon Widget 他不知道裡面的Icons 已經變化了，所以我們必須加上 Key 讓 Flutter 知道有變化
+              child: Icon(
+                isFavorite ? Icons.star : Icons.star_border,
+                key: ValueKey(isFavorite),
+              ),
+              transitionBuilder: (child, animation) => RotationTransition(
+                // turns: animation,
+                // 預設寫法，所以動畫值會是 0 - 1
+                turns: Tween<double>(
+                  begin: 0.8,
+                  end: 1.0,
+                ).animate(animation),
+                child: child,
+              ),
+            ),
           )
         ],
       ),
