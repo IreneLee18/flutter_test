@@ -86,9 +86,30 @@ class _CategoryScreenState extends ConsumerState<CategoryScreen>
       ),
       // builder：當動畫有變化時都會被調用，但因為我只想改變我的動畫而不所有的 UI
       //          所以我可以將我的 UI 當作 child 參數傳進去，進行效能優化
-      builder: (context, child) => Padding(
-        padding: EdgeInsets.only(
-          top: 100 - _animationController.value * 100,
+      builder: (context, child) => SlideTransition(
+        // Tween 動畫：
+        // Tween：希望動畫在這兩個設定中間做變化，舉例：Y軸從 30% 移動到Y軸 0%
+        // 0: 0% ,0.3: 30%, 1: 100% ...以此類推
+
+        // 寫法一：使用 _animationController.drive 來整合 Tween
+        // position: _animationController.drive(
+        //   Tween(
+        //     begin: const Offset(0, 0.3),
+        //     end: const Offset(0, 0),
+        //   ),
+        // ),
+        // 寫法二：使用 CurvedAnimation 指定動畫曲線
+        position: Tween(
+          begin: const Offset(0, 0.3),
+          end: const Offset(0, 0),
+        ).animate(
+          // CurvedAnimation：用來改變動畫曲線
+          CurvedAnimation(
+            // parent：指定的動畫 controller
+            parent: _animationController,
+            // curve：指定的動畫曲線
+            curve: Curves.bounceInOut,
+          ),
         ),
         child: child,
       ),
