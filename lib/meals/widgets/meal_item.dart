@@ -49,14 +49,19 @@ class MealItem extends StatelessWidget {
         },
         child: Stack(
           children: [
-            FadeInImage(
-              // placeholder：loading 的佔位
-              placeholder: MemoryImage(kTransparentImage),
-              // NetworkImage：從網路下來的照片網址
-              image: NetworkImage(meal.imageUrl),
-              height: 200,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            // Hero：實現跨頁面的共享動畫效果
+            Hero(
+              // 需要給唯一值，去比對不同頁面一樣的tag
+              tag: meal.id,
+              child: FadeInImage(
+                // placeholder：loading 的佔位
+                placeholder: MemoryImage(kTransparentImage),
+                // NetworkImage：從網路下來的照片網址
+                image: NetworkImage(meal.imageUrl),
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
             Positioned(
               bottom: 0,
