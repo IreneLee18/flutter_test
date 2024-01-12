@@ -191,15 +191,16 @@ class _GroceriesState extends State<GroceriesScreen> {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Your Groceries'),
-          actions: [
-            IconButton(
-              onPressed: _onNewItem,
-              icon: const Icon(Icons.add),
-            )
-          ],
-        ),
-        body: content);
+      appBar: AppBar(
+        title: const Text('Your Groceries'),
+        actions: [
+          IconButton(
+            onPressed: _onNewItem,
+            icon: const Icon(Icons.add),
+          )
+        ],
+      ),
+      body: content,
+    );
   }
 }
