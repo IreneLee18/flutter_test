@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:test/shopping_list/data/categories.dart';
 import 'package:test/shopping_list/models/category.dart';
 import 'package:test/shopping_list/models/grocery_item.dart';
+import 'package:http/http.dart' as http;
 
 class NewItemScreen extends StatefulWidget {
   const NewItemScreen({super.key});
@@ -19,23 +23,46 @@ class _NewItemState extends State<NewItemScreen> {
   Category _selectedCategory = categories[Categories.vegetables]!;
   String _name = '';
   int _quantity = 1;
+  bool _isSending = false;
 
-  void _saveItem() {
+  void _saveItem() async {
     //  _formKey.currentState!.validate()，會幫我們找使用 _formKey 下的 widget 裡面有寫到 validator，並且驗證是否有錯誤
     // currentState: form 的狀態
     // _formKey.currentState!.validate(); 回傳值：
     // true: 所有驗證成功
     // false: 有驗證失敗
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isSending = true;
+      });
       _formKey.currentState!.save();
-      Navigator.of(context).pop(
-        GroceryItem(
-          id: DateTime.now().toString(),
-          name: _name,
-          quantity: _quantity,
-          category: _selectedCategory,
-        ),
+      // 因為使用 Uri.https，因此可以省略https://
+      // 參數：(url, end point)
+      final url = Uri.https(
+        'testflutter-14d88-default-rtdb.firebaseio.com',
+        'shopping-list.json',
       );
+      final res = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'name': _name,
+          'quantity': _quantity,
+          'category': _selectedCategory.title,
+        }),
+      );
+      if (res.statusCode == 200) {
+        final Map<String, dynamic> jsonRes = json.decode(res.body);
+        // 將資料傳給上一頁
+        Navigator.of(context).pop(
+          GroceryItem(
+            id: jsonRes['name'],
+            name: _name,
+            quantity: _quantity,
+            category: _selectedCategory,
+          ),
+        );
+      }
     }
   }
 
@@ -132,12 +159,20 @@ class _NewItemState extends State<NewItemScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: _reset,
+                    // onPressed == null --> disabled button
+                    onPressed: _isSending ? null : _reset,
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: _saveItem,
-                    child: const Text('Add Item'),
+                    // onPressed == null --> disabled button
+                    onPressed: _isSending ? null : _saveItem,
+                    child: _isSending
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(),
+                          )
+                        : const Text('Add Item'),
                   ),
                 ],
               )

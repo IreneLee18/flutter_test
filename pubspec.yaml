@@ -41,6 +41,7 @@ dependencies:
   date_format: ^2.0.7
   transparent_image: ^2.0.1
   flutter_riverpod: ^2.4.9
+  http: ^1.1.2
 
 dev_dependencies:
   flutter_test:
