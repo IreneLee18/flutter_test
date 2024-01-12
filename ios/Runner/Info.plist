@@ -45,5 +45,14 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- 允許使用照片集：使用者會看到 string 的文字 -->
+	<key>NSPhotoLibraryUsageDescription<key>
+	<string>Pick your favorite place image.</string>
+	<!-- 允許使用相機：使用者會看到 string 的文字 -->
+	<key>NSCameraUsageDescription</key>
+	<string>Take your favorite place image.</string>
+	<!-- 允許使用麥克風：使用者會看到 string 的文字 -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Take your favorite place image.</string>
 </dict>
 </plist>
