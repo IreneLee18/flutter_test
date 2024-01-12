@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/favorite_places/models/place.dart';
 import 'package:test/favorite_places/providers/place.dart';
+import 'package:test/favorite_places/widgets/image_input.dart';
 
 class NewPlaceScreen extends ConsumerStatefulWidget {
   const NewPlaceScreen({super.key});
@@ -61,6 +62,9 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
                   _title = value!;
                 },
               ),
+              const SizedBox(height: 16),
+              const ImageInput(),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
