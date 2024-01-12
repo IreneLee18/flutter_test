@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/favorite_places/providers/place.dart';
+import 'package:test/favorite_places/screens/place_detail.dart';
 
 class PlacesList extends ConsumerWidget {
   const PlacesList({super.key});
@@ -30,6 +31,13 @@ class PlacesList extends ConsumerWidget {
                 color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
         ),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => PlaceDetailScreen(place: places[i]),
+              ));
+        },
       ),
     ));
   }
