@@ -1,11 +1,15 @@
 import 'dart:io';
 
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
-  const ImageInput({super.key});
+  final void Function(File image) onPickImage;
+
+  const ImageInput({
+    required this.onPickImage,
+    super.key,
+  });
 
   @override
   State<ImageInput> createState() {
@@ -29,6 +33,7 @@ class _ImageInputState extends State<ImageInput> {
     // 轉換照片
     setState(() {
       _selectedImage = File(pickedImage.path);
+      widget.onPickImage(_selectedImage!);
     });
   }
 
@@ -45,16 +50,16 @@ class _ImageInputState extends State<ImageInput> {
       alignment: Alignment.center,
       child: _selectedImage != null
           ? GestureDetector(
-            // GestureDetector：使我這個 widget 可以使用任何我想要用的 event
-            // 這裡選擇的是：點擊（onTap）要在叫出相機
-            onTap: _takePicture,
-            child: Image.file(
+              // GestureDetector：使我這個 widget 可以使用任何我想要用的 event
+              // 這裡選擇的是：點擊（onTap）要在叫出相機
+              onTap: _takePicture,
+              child: Image.file(
                 _selectedImage!,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
               ),
-          )
+            )
           : TextButton.icon(
               icon: const Icon(Icons.camera),
               label: const Text('Take Picture'),

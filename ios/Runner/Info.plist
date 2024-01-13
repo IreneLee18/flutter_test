@@ -54,5 +54,7 @@
 	<!-- 允許使用麥克風：使用者會看到 string 的文字 -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Take your favorite place image.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The location for your favorite place.</string>
 </dict>
 </plist>
