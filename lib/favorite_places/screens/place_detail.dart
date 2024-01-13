@@ -14,6 +14,7 @@ class PlaceDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(place.name),
       ),
+      body: Image.file(place.image!),
     );
   }
 }

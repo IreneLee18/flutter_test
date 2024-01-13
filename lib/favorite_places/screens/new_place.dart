@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/favorite_places/models/place.dart';
@@ -16,6 +18,11 @@ class NewPlaceScreen extends ConsumerStatefulWidget {
 class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
+  File? _image;
+
+  void onPickImage(File image) {
+    _image = image;
+  }
 
   void _onSave(WidgetRef ref) {
     if (_formKey.currentState!.validate()) {
@@ -25,6 +32,7 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
             PlaceItem(
               id: DateTime.now().toString(),
               name: _title,
+              image: _image,
             ),
           );
     }
@@ -63,7 +71,7 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              const ImageInput(),
+              ImageInput(onPickImage: onPickImage),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
