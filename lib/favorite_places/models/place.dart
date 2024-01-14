@@ -10,6 +10,10 @@ class PlaceLocation {
     required this.longitude,
     required this.address,
   });
+
+  String get locationImage {
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$latitude,$longitude&zoom=14&size=600x300&maptype=roadmap&markers=size:mid%7Ccolor:red%7C$latitude,$longitude&key=AIzaSyBxyWtTB_khGyOYBRb4-Z7-mWU5tNNktVA';
+  }
 }
 
 class PlaceItem {

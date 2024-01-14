@@ -81,7 +81,6 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
               ImageInput(onPickImage: onPickImage),
               const SizedBox(height: 16),
               LocationInput(onPickLocation: onPickLocation),
-              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
