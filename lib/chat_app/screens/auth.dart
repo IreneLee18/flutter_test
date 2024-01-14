@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:test/chat_app/widgets/user_image_pikcer.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -26,11 +27,10 @@ class _AuthState extends State<AuthScreen> {
     try {
       if (_isLogin) {
         // login
-        final userCredential = await _firebase.signInWithEmailAndPassword(
+        await _firebase.signInWithEmailAndPassword(
           email: _email!,
           password: _password!,
         );
-        print(userCredential);
       } else {
         // create
         await _firebase.createUserWithEmailAndPassword(
@@ -95,6 +95,7 @@ class _AuthState extends State<AuthScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          if (!_isLogin) const UserImagePicker(),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Email Address',
