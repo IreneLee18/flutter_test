@@ -20,7 +20,7 @@ Future<Database> _getDatabase() async {
     // onCreate: 會在我們第一次創建資料庫時執行
     onCreate: (db, version) {
       return db.execute(
-          'CREATE TABLE $databaseName(id TEXT PRIMARY, name TEXT, image TEXT, lat REAL, lng REAL, address TEXT)');
+          'CREATE TABLE $databaseName(id TEXT PRIMARY KEY, name TEXT, image TEXT, lat REAL, lng REAL, address TEXT)');
     },
     version: 1,
   );
@@ -31,7 +31,7 @@ Future<Database> _getDatabase() async {
 class PlaceNotifier extends StateNotifier<List<PlaceItem>> {
   PlaceNotifier() : super(const []);
 
-  void loadPlaces() async {
+  Future<void> loadPlaces() async {
     final db = await _getDatabase();
     // 獲取資料庫資料的方式
     final data = await db.query(databaseName);
