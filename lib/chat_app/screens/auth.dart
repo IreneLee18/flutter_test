@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final _firebase = FirebaseAuth.instance;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -15,10 +18,56 @@ class _AuthState extends State<AuthScreen> {
   String? _email;
   String? _password;
 
-  void _onSubmit() {
+  void _onSubmit() async {
     final isValid = _formKey.currentState!.validate();
-    if (isValid) {
-      _formKey.currentState!.save();
+    if (!isValid) return;
+    _formKey.currentState!.save();
+
+    try {
+      if (_isLogin) {
+        // login
+        final userCredential = await _firebase.signInWithEmailAndPassword(
+          email: _email!,
+          password: _password!,
+        );
+        print(userCredential);
+      } else {
+        // create
+        await _firebase.createUserWithEmailAndPassword(
+          email: _email!,
+          password: _password!,
+        );
+      }
+    } on FirebaseAuthException catch (err) {
+      ScaffoldMessenger.of(context).clearMaterialBanners();
+      String errMsg = err.message ?? 'Error';
+      if (err.code == 'email-already-in-use') {
+        errMsg = 'Email already in use.';
+      }
+      if (err.code == 'invalid-email') {
+        errMsg = 'Invalid email.';
+      }
+      if (err.code == 'operation-not-allowed') {
+        errMsg = 'Operation not allowed.';
+      }
+      if (err.code == 'weak-password') {
+        errMsg = 'Weak password.';
+      }
+      if (err.code == 'user-disabled') {
+        errMsg = 'User disabled.';
+      }
+      if (err.code == 'user-not-found') {
+        errMsg = 'User not found.';
+      }
+      if (err.code == 'wrong-password') {
+        errMsg = 'Wrong password.';
+      }
+      print('errMsg$errMsg,${err.code}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errMsg),
+        ),
+      );
     }
   }
 
