@@ -7,8 +7,49 @@ import 'package:path/path.dart' as path;
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:sqflite/sqlite_api.dart';
 
+const databaseName = 'place';
+
+Future<Database> _getDatabase() async {
+  // 目的：將資料存取在資料庫中
+  // 創建一個資料庫的目錄
+  final dbPath = await sql.getDatabasesPath();
+  // 打開資料庫，並傳入自己創建的資料庫目錄路徑
+  // 當試圖打開一個還不存在的資料庫，sqlLite 會自動為我們創建一個資料庫
+  final db = await sql.openDatabase(
+    path.join(dbPath, '$databaseName.db'),
+    // onCreate: 會在我們第一次創建資料庫時執行
+    onCreate: (db, version) {
+      return db.execute(
+          'CREATE TABLE $databaseName(id TEXT PRIMARY, name TEXT, image TEXT, lat REAL, lng REAL, address TEXT)');
+    },
+    version: 1,
+  );
+
+  return db;
+}
+
 class PlaceNotifier extends StateNotifier<List<PlaceItem>> {
   PlaceNotifier() : super(const []);
+
+  void loadPlaces() async {
+    final db = await _getDatabase();
+    // 獲取資料庫資料的方式
+    final data = await db.query(databaseName);
+    final List<PlaceItem> places = data
+        .map((row) => PlaceItem(
+              id: row['id'] as String,
+              name: row['name'] as String,
+              image: File(row['image'] as String),
+              location: PlaceLocation(
+                latitude: row['lat'] as double,
+                longitude: row['lng'] as double,
+                address: row['address'] as String,
+              ),
+            ))
+        .toList();
+
+    state = places;
+  }
 
   void addPlace({
     required String name,
@@ -30,23 +71,10 @@ class PlaceNotifier extends StateNotifier<List<PlaceItem>> {
       location: location,
     );
 
-    // 目的：將資料存取在資料庫中
-    // 創建一個資料庫的目錄
-    final dbPath = await sql.getDatabasesPath();
-    // 打開資料庫，並傳入自己創建的資料庫目錄路徑
-    // 當試圖打開一個還不存在的資料庫，sqlLite 會自動為我們創建一個資料庫
-    final db = await sql.openDatabase(
-      path.join(dbPath, 'place.db'),
-      // onCreate: 會在我們第一次創建資料庫時執行
-      onCreate: (db, version) {
-        return db.execute(
-            'CREATE TABLE place(id TEXT PRIMARY, name TEXT, image TEXT, lat REAL, lng REAL, address TEXT)');
-      },
-      version: 1,
-    );
+    final db = await _getDatabase();
 
     // 將資料存在資料庫裡面
-    db.insert('place', {
+    db.insert(databaseName, {
       'id': newPlace.id,
       'name': newPlace.name,
       'image': newPlace.image!.path,
