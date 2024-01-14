@@ -34,13 +34,11 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       Navigator.pop(context);
+      if (_image == null || _location == null) return;
       ref.read(placeProvider.notifier).addPlace(
-            PlaceItem(
-              id: DateTime.now().toString(),
-              name: _title,
-              image: _image,
-              location: _location,
-            ),
+            name: _title,
+            image: _image!,
+            location: _location!,
           );
     }
   }
