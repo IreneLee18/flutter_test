@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/favorite_places/models/place.dart';
+import 'package:test/favorite_places/screens/map.dart';
 
 const key = 'AIzaSyBxyWtTB_khGyOYBRb4-Z7-mWU5tNNktVA';
 
@@ -24,6 +26,23 @@ class LocationInput extends StatefulWidget {
 class _LocationInputState extends State<LocationInput> {
   bool _isGettingLocation = false;
   PlaceLocation? _pickLocation;
+
+  void _savePlace(double lat, double lng) async {
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=$key');
+
+    final res = await http.get(url);
+    final data = json.decode(res.body);
+    final address = data['results'][0]['formatted_address'];
+
+    final placeLocation =
+        PlaceLocation(latitude: lat, longitude: lng, address: address);
+    widget.onPickLocation(placeLocation);
+    setState(() {
+      _isGettingLocation = false;
+      _pickLocation = placeLocation;
+    });
+  }
 
   void _getCurrentLocation() async {
     Location location = Location();
@@ -56,21 +75,18 @@ class _LocationInputState extends State<LocationInput> {
     final lng = locationData.longitude;
 
     if (lat == null || lng == null) return;
+    _savePlace(lat, lng);
+  }
 
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=$key');
-
-    final res = await http.get(url);
-    final data = json.decode(res.body);
-    final address = data['results'][0]['formatted_address'];
-
-    final placeLocation =
-        PlaceLocation(latitude: lat, longitude: lng, address: address);
-    widget.onPickLocation(placeLocation);
-    setState(() {
-      _isGettingLocation = false;
-      _pickLocation = placeLocation;
-    });
+  void _selectLocation() async {
+    final pickLocation = await Navigator.push<LatLng>(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => const MapScreen(),
+      ),
+    );
+    if (pickLocation == null) return;
+    _savePlace(pickLocation.latitude, pickLocation.longitude);
   }
 
   @override
@@ -111,7 +127,7 @@ class _LocationInputState extends State<LocationInput> {
               label: const Text('Get Current Location'),
             ),
             TextButton.icon(
-              onPressed: () {},
+              onPressed: _selectLocation,
               icon: const Icon(Icons.map),
               label: const Text('Select on Map'),
             ),
