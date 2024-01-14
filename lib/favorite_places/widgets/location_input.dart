@@ -5,6 +5,8 @@ import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:test/favorite_places/models/place.dart';
 
+const key = 'AIzaSyBxyWtTB_khGyOYBRb4-Z7-mWU5tNNktVA';
+
 class LocationInput extends StatefulWidget {
   const LocationInput({
     required this.onPickLocation,
@@ -21,6 +23,15 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInputState extends State<LocationInput> {
   bool _isGettingLocation = false;
+  PlaceLocation? _pickLocation;
+
+  String get locationImage {
+    if (_pickLocation == null) return '';
+    final lat = _pickLocation!.latitude;
+    final lng = _pickLocation!.longitude;
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=14&size=600x300&maptype=roadmap&markers=size:mid%7Ccolor:red%7C$lat,$lng&key=$key';
+  }
+
   void _getCurrentLocation() async {
     Location location = Location();
 
@@ -54,7 +65,7 @@ class _LocationInputState extends State<LocationInput> {
     if (lat == null || lng == null) return;
 
     final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=AIzaSyBxyWtTB_khGyOYBRb4-Z7-mWU5tNNktVA');
+        'https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=$key');
 
     final res = await http.get(url);
     final data = json.decode(res.body);
@@ -65,6 +76,7 @@ class _LocationInputState extends State<LocationInput> {
     widget.onPickLocation(placeLocation);
     setState(() {
       _isGettingLocation = false;
+      _pickLocation = placeLocation;
     });
   }
 
@@ -83,14 +95,19 @@ class _LocationInputState extends State<LocationInput> {
           ),
           child: _isGettingLocation
               ? const CircularProgressIndicator()
-              : Text(
-                  'No location chosen',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(color: Theme.of(context).colorScheme.primary),
-                ),
+              : _pickLocation != null
+                  ? Image.network(
+                      locationImage,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    )
+                  : Text(
+                      'No location chosen',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
