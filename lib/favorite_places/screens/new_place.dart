@@ -20,13 +20,13 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
   File? _image;
-  String? _location;
+  PlaceLocation? _location;
 
   void onPickImage(File image) {
     _image = image;
   }
 
-  void onPickLocation(String location) {
+  void onPickLocation(PlaceLocation location) {
     _location = location;
   }
 
