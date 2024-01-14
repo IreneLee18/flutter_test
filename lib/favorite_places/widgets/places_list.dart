@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:test/favorite_places/providers/place.dart';
+import 'package:test/favorite_places/models/place.dart';
 import 'package:test/favorite_places/screens/place_detail.dart';
 
-class PlacesList extends ConsumerWidget {
-  const PlacesList({super.key});
+class PlacesList extends StatelessWidget {
+  final List<PlaceItem> places;
+  const PlacesList({required this.places, super.key});
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final places = ref.watch(placeProvider);
-    print(places);
-
+  Widget build(BuildContext context) {
     if (places.isEmpty) {
       return Center(
         child: Text(
