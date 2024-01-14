@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:test/favorite_places/models/place.dart';
 import 'package:test/favorite_places/providers/place.dart';
 import 'package:test/favorite_places/widgets/image_input.dart';
+import 'package:test/favorite_places/widgets/location_input.dart';
 
 class NewPlaceScreen extends ConsumerStatefulWidget {
   const NewPlaceScreen({super.key});
@@ -19,9 +20,14 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = '';
   File? _image;
+  String? _location;
 
   void onPickImage(File image) {
     _image = image;
+  }
+
+  void onPickLocation(String location) {
+    _location = location;
   }
 
   void _onSave(WidgetRef ref) {
@@ -33,6 +39,7 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
               id: DateTime.now().toString(),
               name: _title,
               image: _image,
+              location: _location,
             ),
           );
     }
@@ -72,6 +79,8 @@ class _NewPlaceState extends ConsumerState<NewPlaceScreen> {
               ),
               const SizedBox(height: 16),
               ImageInput(onPickImage: onPickImage),
+              const SizedBox(height: 16),
+              LocationInput(onPickLocation: onPickLocation),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
