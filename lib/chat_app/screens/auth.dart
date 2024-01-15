@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test/chat_app/widgets/user_image_pikcer.dart';
@@ -17,6 +18,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthState extends State<AuthScreen> {
   bool _isLogin = true;
+  bool _isAuthenticating = false;
   final _formKey = GlobalKey<FormState>();
   String? _email;
   String? _password;
@@ -38,10 +40,12 @@ class _AuthState extends State<AuthScreen> {
         ),
       );
     }
-    ;
     _formKey.currentState!.save();
 
     try {
+      setState(() {
+        _isAuthenticating = true;
+      });
       if (_isLogin) {
         // login
         await _firebase.signInWithEmailAndPassword(
@@ -50,10 +54,18 @@ class _AuthState extends State<AuthScreen> {
         );
       } else {
         // create
-        await _firebase.createUserWithEmailAndPassword(
+        final userCredential = await _firebase.createUserWithEmailAndPassword(
           email: _email!,
           password: _password!,
         );
+        // 想要儲存的路徑.檔案名稱
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('user_image')
+            .child('${userCredential.user!.uid}.jpg');
+        // 上傳檔案
+        await storageRef.putFile(_image!);
+        final imageUrl = await storageRef.getDownloadURL();
       }
     } on FirebaseAuthException catch (err) {
       ScaffoldMessenger.of(context).clearMaterialBanners();
@@ -84,6 +96,10 @@ class _AuthState extends State<AuthScreen> {
           content: Text(errMsg),
         ),
       );
+
+      setState(() {
+        _isAuthenticating = false;
+      });
     }
   }
 
@@ -154,24 +170,28 @@ class _AuthState extends State<AuthScreen> {
                             },
                           ),
                           const SizedBox(height: 12),
-                          ElevatedButton(
-                              onPressed: _onSubmit,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer,
-                              ),
-                              child: Text(_isLogin ? 'Login' : 'SignUp')),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _isLogin = !_isLogin;
-                              });
-                            },
-                            child: Text(_isLogin
-                                ? 'Create an account'
-                                : 'I already have an account.'),
-                          )
+                          if (_isAuthenticating)
+                            const CircularProgressIndicator(),
+                          if (!_isAuthenticating)
+                            ElevatedButton(
+                                onPressed: _onSubmit,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                ),
+                                child: Text(_isLogin ? 'Login' : 'SignUp')),
+                          if (!_isAuthenticating)
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isLogin = !_isLogin;
+                                });
+                              },
+                              child: Text(_isLogin
+                                  ? 'Create an account'
+                                  : 'I already have an account.'),
+                            )
                         ],
                       ),
                     ),
