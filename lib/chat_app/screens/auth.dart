@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -66,6 +67,15 @@ class _AuthState extends State<AuthScreen> {
         // 上傳檔案
         await storageRef.putFile(_image!);
         final imageUrl = await storageRef.getDownloadURL();
+        // 檔案位置.檔案名稱.儲存哪些檔案
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .set({
+          'userName': '',
+          'email': _email,
+          'imageUrl': imageUrl
+        });
       }
     } on FirebaseAuthException catch (err) {
       ScaffoldMessenger.of(context).clearMaterialBanners();
