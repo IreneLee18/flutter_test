@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test/chat_app/widgets/user_image_pikcer.dart';
@@ -18,10 +20,25 @@ class _AuthState extends State<AuthScreen> {
   final _formKey = GlobalKey<FormState>();
   String? _email;
   String? _password;
+  File? _image;
+
+  void _onPickerImage(File image) {
+    setState(() {
+      _image = image;
+    });
+  }
 
   void _onSubmit() async {
     final isValid = _formKey.currentState!.validate();
-    if (!isValid) return;
+    if (!isValid || !_isLogin && _image == null) {
+      ScaffoldMessenger.of(context).clearMaterialBanners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter correctly.'),
+        ),
+      );
+    }
+    ;
     _formKey.currentState!.save();
 
     try {
@@ -62,7 +79,6 @@ class _AuthState extends State<AuthScreen> {
       if (err.code == 'wrong-password') {
         errMsg = 'Wrong password.';
       }
-      print('errMsg$errMsg,${err.code}');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errMsg),
@@ -95,7 +111,8 @@ class _AuthState extends State<AuthScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (!_isLogin) const UserImagePicker(),
+                          if (!_isLogin)
+                            UserImagePicker(onPickerImage: _onPickerImage),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Email Address',
