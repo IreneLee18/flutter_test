@@ -21,6 +21,7 @@ class _AuthState extends State<AuthScreen> {
   bool _isLogin = true;
   bool _isAuthenticating = false;
   final _formKey = GlobalKey<FormState>();
+  String? _name;
   String? _email;
   String? _password;
   File? _image;
@@ -71,11 +72,7 @@ class _AuthState extends State<AuthScreen> {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
-            .set({
-          'userName': '',
-          'email': _email,
-          'imageUrl': imageUrl
-        });
+            .set({'userName': _name, 'email': _email, 'imageUrl': imageUrl});
       }
     } on FirebaseAuthException catch (err) {
       ScaffoldMessenger.of(context).clearMaterialBanners();
@@ -139,6 +136,23 @@ class _AuthState extends State<AuthScreen> {
                         children: [
                           if (!_isLogin)
                             UserImagePicker(onPickerImage: _onPickerImage),
+                          if (!_isLogin)
+                            TextFormField(
+                              decoration: const InputDecoration(
+                                labelText: 'Name',
+                              ),
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value.trim().isEmpty) {
+                                  return 'Please enter a valid name.';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                _name = value;
+                              },
+                            ),
                           TextFormField(
                             decoration: const InputDecoration(
                               labelText: 'Email Address',
